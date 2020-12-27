@@ -4,10 +4,13 @@ import com.wiredbraincoffee.productapiannotation.model.Product;
 import com.wiredbraincoffee.productapiannotation.repository.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.Duration;
 
 /**
  * @author bessam on 26/12/2020
@@ -63,5 +66,11 @@ public class ProductController {
     @DeleteMapping()
     public Mono<Void> deleteAllProduct() {
         return productRepository.deleteAll();
+    }
+
+    @GetMapping(value = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ProductEvent> getProductEvents(){
+        return Flux.interval(Duration.ofSeconds(1))
+                .map(val -> new ProductEvent(val, "Product Event"));
     }
 }
